@@ -2,6 +2,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -17,8 +18,6 @@ import (
 
 var devName = "/dev/input/by-id/usb-Sycreader_RFID_Technology_Co.__Ltd_SYC_ID_IC_USB_Reader_08FF20140315-event-kbd"
 
-var port = "8000"
-var server = "sb-timer"
 var uri = "/api/cardreader?id="
 
 func check(e error) error {
@@ -71,7 +70,7 @@ func keepLines(s string, n int) string {
 	return strings.Replace(result, "\r", "", -1)
 }
 
-func sendToServer(rfid string) error {
+func sendToServer(rfid, server, port string) error {
 	url := "http://" + server + ":" + port +
 		uri + rfid //DevSkim: ignore DS137138 until 2017-10-25
 	resp, err := http.Get(url)
@@ -79,15 +78,28 @@ func sendToServer(rfid string) error {
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	lstr := fmt.Sprintf("body: [%s]", body)
-	log.Trace(lstr)
+	log.Debug(lstr)
 
 	return err
 }
 
 func main() {
+	argLogging := flag.String("log", "debug", "one of: debug, info, warn, error, fatal")
+	argServer := flag.String("server", "localhost", "the name of the server, the rfid gets send to")
+	argServerPort := flag.Int("port", 8000, "the portnumber of the 'server'")
+	argUsage := flag.Bool("h", false, "writes some information about args")
+
+	// Once all flags are declared, call flag.Parse() to execute the command-line parsing.
+	flag.Parse()
+
+	if *argUsage {
+		flag.Usage()
+		os.Exit(0)
+	}
 	log.SetHandler(cli.Default)
-	log.SetLevel(log.InfoLevel)
+	log.SetLevelFromString(*argLogging)
 	log.Info("syscid RFID start")
+	log.Infof("starting with server %s, port %d, log %s. -h for help", *argServer, *argServerPort, *argLogging)
 	dev, err := evdev.Open(devName)
 	check(err)
 	defer dev.Close()
@@ -97,7 +109,7 @@ func main() {
 		rfid := readRfid(dev)
 		if len(rfid) > 0 {
 			log.Info("rfid detected: " + rfid)
-			err = sendToServer(rfid)
+			err = sendToServer(rfid, *argServer, strconv.Itoa(*argServerPort))
 			check(err)
 		}
 	}
