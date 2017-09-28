@@ -18,7 +18,7 @@ import (
 var devName = "/dev/input/by-id/usb-Sycreader_RFID_Technology_Co.__Ltd_SYC_ID_IC_USB_Reader_08FF20140315-event-kbd"
 
 var port = "8000"
-var server = "localhost"
+var server = "sb-timer"
 var uri = "/api/cardreader?id="
 
 func check(e error) error {
