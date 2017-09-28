@@ -86,7 +86,7 @@ func sendToServer(rfid string) error {
 
 func main() {
 	log.SetHandler(cli.Default)
-	log.SetLevel(log.DebugLevel)
+	log.SetLevel(log.InfoLevel)
 	log.Info("syscid RFID start")
 	dev, err := evdev.Open(devName)
 	check(err)
