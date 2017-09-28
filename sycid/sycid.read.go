@@ -2,6 +2,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -77,14 +78,15 @@ func sendToServer(rfid string) error {
 	check(err)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-	log.Trace("get:\n")
+	lstr := fmt.Sprintf("body: [%s]", body)
+	log.Trace(lstr)
 
 	return err
 }
 
 func main() {
 	log.SetHandler(cli.Default)
-	log.SetLevel(log.Info)
+	log.SetLevel(log.DebugLevel)
 	log.Info("syscid RFID start")
 	dev, err := evdev.Open(devName)
 	check(err)

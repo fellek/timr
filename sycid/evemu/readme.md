@@ -10,7 +10,7 @@ To describe a device in your machine:
 
 To record data from your device:
 
-  `$ sudo evemu-record /dev/input/by-id/usb-Sycreader_RFID_Technology_Co.__Ltd_SYC_ID_IC_USB_Reader_08FF20140315-event-kbd > device.event`
+  `$ sudo evemu-record /dev/input/by-id/usb-Sycreader_RFID_Technology_Co.__Ltd_SYC_ID_IC_USB_Reader_08FF20140315-event-kbd > bluechip.event`
 
 To remotely setup a copy of the device:
 
@@ -19,7 +19,7 @@ To remotely setup a copy of the device:
 The device node will be printed on the terminal, and will stay valid until the program is 
 terminated. To replay the input stream (beware that pointer clicks can execute commands in your window manager):
 
-  `$ sudo evemu-play /dev/input/by-id/usb-Sycreader_RFID_Technology_Co.__Ltd_SYC_ID_IC_USB_Reader_08FF20140315-event-kbd < device.event`
+  `$ sudo evemu-play /dev/input/event17 < bluechip.event`
 
 More interestingly, one can first setup a program like mtview to grab the input:
 
